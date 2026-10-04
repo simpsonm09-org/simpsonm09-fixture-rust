@@ -30,3 +30,7 @@ utoipa = "6"
 [dev-dependencies]
 http-body-util = "0.1"
 tower = { version = "0.5", features = ["util"] }
+
+[lints.clippy]
+cognitive_complexity = "warn"
+too_many_lines = "warn"
