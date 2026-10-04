@@ -1,0 +1,31 @@
+[package]
+name = "simpsonm09-fixture-rust"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.99"
+description = "Rust + axum item CRUD service for the simpsonm09 fleet standard"
+license = "MIT"
+publish = false
+
+[lib]
+name = "simpsonm09_fixture_rust"
+path = "src/lib.rs"
+
+[[bin]]
+name = "simpsonm09-fixture-rust"
+path = "src/main.rs"
+
+[[bin]]
+name = "write-openapi"
+path = "src/bin/write-openapi.rs"
+
+[dependencies]
+axum = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net"] }
+utoipa = "5"
+
+[dev-dependencies]
+http-body-util = "0.1"
+tower = { version = "0.5", features = ["util"] }

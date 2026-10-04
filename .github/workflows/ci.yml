@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    if: github.repository_owner == 'simpsonm09-org'
+    uses: simpsonm09-org/simpsonm09-repo-standard/.github/workflows/lint.yml@bbfbdab3f0d3ab3be423447c0a1dd18ee944b6cb # repo-standard main
+  aislop:
+    if: github.repository_owner == 'simpsonm09-org'
+    permissions:
+      contents: read
+      security-events: write
+    uses: simpsonm09-org/simpsonm09-repo-standard/.github/workflows/aislop.yml@bbfbdab3f0d3ab3be423447c0a1dd18ee944b6cb # repo-standard main
+  security:
+    if: github.repository_owner == 'simpsonm09-org'
+    permissions:
+      contents: read
+      security-events: write
+    uses: simpsonm09-org/simpsonm09-repo-standard/.github/workflows/security.yml@bbfbdab3f0d3ab3be423447c0a1dd18ee944b6cb # repo-standard main
+  standard:
+    if: github.repository_owner == 'simpsonm09-org'
+    permissions:
+      contents: read
+    uses: simpsonm09-org/simpsonm09-repo-standard/.github/workflows/standard.yml@bbfbdab3f0d3ab3be423447c0a1dd18ee944b6cb # repo-standard main
+
+  test:
+    if: github.repository_owner == 'simpsonm09-org'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install pinned tools
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+      - name: Install dependencies
+        run: just deps
+      - name: Check the API document
+        run: |
+          just spec
+          git diff --exit-code -- docs/openapi.json
+      - name: Test
+        run: just test
+      - name: Tests with coverage
+        run: just coverage
+      - name: Patch coverage
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/patch-coverage.mjs --lcov coverage/lcov.info --base "$BASE" --threshold 80

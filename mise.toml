@@ -1,0 +1,41 @@
+# Tool pins for this repository. Run `mise install` to get them.
+# See https://github.com/simpsonm09-org/simpsonm09-repo-standard/blob/main/docs/adoption.md
+
+[tools]
+
+# Task runner
+"aqua:casey/just" = "1.58.0"
+"aqua:rhysd/actionlint" = "1.7.12"
+"aqua:zizmorcore/zizmor" = "1.30.1"
+"cargo:cargo-llvm-cov" = "0.9.1"
+node = "26"
+
+# Rust toolchain with the components the lint and coverage recipes need. On
+# Windows the GNU host is selected because it links without a Visual Studio
+# install; Linux and macOS use the default host.
+rust = [
+  { version = "1.99.0", components = ["clippy", "rustfmt", "llvm-tools-preview"], os = ["linux", "macos"] },
+  { version = "1.99.0-x86_64-pc-windows-gnu", components = ["clippy", "rustfmt", "llvm-tools-preview"], os = ["windows"] },
+]
+
+# Linters
+"aqua:grafana/flint" = "0.22.14"
+
+[env]
+FLINT_CONFIG_DIR = ".github/config"
+
+[tasks.lint]
+description = "Run all lints"
+run = "flint run"
+
+[tasks."lint:fix"]
+description = "Auto-fix lint issues"
+run = "flint run --fix"
+
+[tasks.test]
+description = "Run the test suite"
+run = "cargo test --all-targets --all-features"
+
+[tasks.serve]
+description = "Serve the API on http://127.0.0.1:3000"
+run = "cargo run --quiet"
