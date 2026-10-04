@@ -38,22 +38,17 @@ impl ItemService {
         name: String,
         description: Option<String>,
     ) -> Result<Item, ItemError> {
-        if !self.store.exists_by_id(id) {
-            return Err(ItemError::NotFound(id));
-        }
-        Ok(self.store.save(Item {
-            id: Some(id),
-            name,
-            description,
-        }))
+        self.store
+            .update(id, name, description)
+            .ok_or(ItemError::NotFound(id))
     }
 
     pub fn delete_item(&self, id: i64) -> Result<(), ItemError> {
-        if !self.store.exists_by_id(id) {
-            return Err(ItemError::NotFound(id));
+        if self.store.delete(id) {
+            Ok(())
+        } else {
+            Err(ItemError::NotFound(id))
         }
-        self.store.delete_by_id(id);
-        Ok(())
     }
 }
 
@@ -112,12 +107,19 @@ mod tests {
             stored
         }
 
-        fn delete_by_id(&self, id: i64) {
-            self.items.lock().unwrap().retain(|item| item.id != Some(id));
+        fn update(&self, id: i64, name: String, description: Option<String>) -> Option<Item> {
+            let mut items = self.items.lock().unwrap();
+            let item = items.iter_mut().find(|item| item.id == Some(id))?;
+            item.name = name;
+            item.description = description;
+            Some(item.clone())
         }
 
-        fn exists_by_id(&self, id: i64) -> bool {
-            self.items.lock().unwrap().iter().any(|item| item.id == Some(id))
+        fn delete(&self, id: i64) -> bool {
+            let mut items = self.items.lock().unwrap();
+            let before = items.len();
+            items.retain(|item| item.id != Some(id));
+            items.len() != before
         }
     }
 

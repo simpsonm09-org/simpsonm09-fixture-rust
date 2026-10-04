@@ -18,8 +18,11 @@ pub trait ItemStore: Send + Sync {
     fn find_all(&self) -> Vec<Item>;
     fn find_by_id(&self, id: i64) -> Option<Item>;
     fn save(&self, item: Item) -> Item;
-    fn delete_by_id(&self, id: i64);
-    fn exists_by_id(&self, id: i64) -> bool;
+    /// Replaces the item with `id` under one lock. Returns `None` when no item
+    /// has that id, so a concurrent delete cannot race the write.
+    fn update(&self, id: i64, name: String, description: Option<String>) -> Option<Item>;
+    /// Removes the item with `id` under one lock, returning whether one existed.
+    fn delete(&self, id: i64) -> bool;
 }
 
 /// In-memory store adapter. It converges to the seeded state on restart, so a
@@ -123,11 +126,15 @@ impl ItemStore for InMemoryItemStore {
         stored
     }
 
-    fn delete_by_id(&self, id: i64) {
-        self.lock().items.remove(&id);
+    fn update(&self, id: i64, name: String, description: Option<String>) -> Option<Item> {
+        let mut inner = self.lock();
+        let entry = inner.items.get_mut(&id)?;
+        entry.name = name;
+        entry.description = description;
+        Some(entry.clone())
     }
 
-    fn exists_by_id(&self, id: i64) -> bool {
-        self.lock().items.contains_key(&id)
+    fn delete(&self, id: i64) -> bool {
+        self.lock().items.remove(&id).is_some()
     }
 }
