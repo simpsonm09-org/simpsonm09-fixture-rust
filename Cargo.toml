@@ -6,6 +6,7 @@ rust-version = "1.99"
 description = "Rust + axum item CRUD service for the simpsonm09 fleet standard"
 license = "MIT"
 publish = false
+default-run = "simpsonm09-fixture-rust"
 
 [lib]
 name = "simpsonm09_fixture_rust"
