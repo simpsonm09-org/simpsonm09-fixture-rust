@@ -2,15 +2,11 @@
 //! two contract details the OpenAPI shape must hold.
 
 use serde_json::Value;
-use simpsonm09_fixture_rust::openapi::ApiDoc;
-use utoipa::OpenApi;
+use simpsonm09_fixture_rust::openapi;
 
 /// The document exactly as `just spec` writes it.
 fn generated() -> String {
-    format!(
-        "{}\n",
-        ApiDoc::openapi().to_pretty_json().expect("serialize OpenAPI document")
-    )
+    openapi::serialized()
 }
 
 #[test]

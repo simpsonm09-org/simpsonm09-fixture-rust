@@ -33,6 +33,10 @@ just verify
 
 Read [`docs/README.md`](docs/README.md) for the architecture, the items feature, and the OpenAPI contract.
 
+## Platform notes
+
+On Windows the GNU target needs MinGW binutils (`dlltool`, `as`, `ld`) on `PATH`; without them `cargo test` fails with `dlltool.exe: program not found`. `cargo llvm-cov` cannot run on the Windows GNU host, so run `just coverage` in CI only.
+
 ## License
 
 MIT. See [`LICENSE`](LICENSE).

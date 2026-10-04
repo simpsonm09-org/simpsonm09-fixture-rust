@@ -18,3 +18,15 @@ use crate::item::api::*;
     components(schemas(ItemRequest, ItemResponse, ProblemDetail))
 )]
 pub struct ApiDoc;
+
+/// Serializes the document exactly as `just spec` writes it: pretty JSON with a
+/// trailing newline. The writer binary and the drift test share this so they
+/// cannot disagree on the byte layout.
+pub fn serialized() -> String {
+    format!(
+        "{}\n",
+        ApiDoc::openapi()
+            .to_pretty_json()
+            .expect("serialize the OpenAPI document")
+    )
+}

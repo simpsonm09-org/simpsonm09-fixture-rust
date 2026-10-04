@@ -21,6 +21,7 @@ A layered Rust + axum item CRUD service. It is the Rust fixture for the fleet st
 - Domain: `GET`, `POST`, `PUT`, and `DELETE` over `/items`. Reads, updates, and deletes of an unknown id return a domain `ItemError::NotFound` that `src/item/api.rs` maps to a 404 `application/problem+json` body.
 - Contracts: `docs/openapi.json` is generated from the handlers and the DTOs. Regenerate it with `just spec`.
 - Docs: `docs/README.md` indexes the architecture, the items feature, and the OpenAPI contract.
+- Windows build: the GNU target needs MinGW binutils (`dlltool`, `as`, `ld`) on `PATH` or `cargo test` fails with `dlltool.exe: program not found`. `cargo llvm-cov` cannot run on the Windows GNU host (E0463, no `libprofiler_builtins`), so run `just coverage` in CI only.
 
 ## Skills
 
