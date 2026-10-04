@@ -3,6 +3,7 @@
 
 use std::sync::Arc;
 
+use axum::extract::rejection::JsonRejection;
 use axum::extract::{Path, State};
 use axum::http::{header, HeaderValue, StatusCode};
 use axum::response::{IntoResponse, Response};
@@ -67,6 +68,13 @@ fn to_response(item: Item) -> ItemResponse {
         name: item.name,
         description: item.description,
     }
+}
+
+/// Maps a JSON extraction rejection (missing field, wrong type, malformed body)
+/// to the contract's 400 validation error, so the transport response is a
+/// problem detail instead of axum's default 422.
+fn rejection_to_error(rejection: JsonRejection) -> ItemError {
+    ItemError::Validation(rejection.body_text())
 }
 
 /// Validates a request at the controller boundary. Blank or over-length names
@@ -158,8 +166,9 @@ pub async fn get_item(
 )]
 pub async fn create_item(
     State(service): State<Arc<ItemService>>,
-    Json(request): Json<ItemRequest>,
+    request: Result<Json<ItemRequest>, JsonRejection>,
 ) -> Result<(StatusCode, Json<ItemResponse>), ItemError> {
+    let Json(request) = request.map_err(rejection_to_error)?;
     validate(&request)?;
     let domain = to_item(request);
     let created = service.create_item(domain.name, domain.description);
@@ -182,8 +191,9 @@ pub async fn create_item(
 pub async fn update_item(
     State(service): State<Arc<ItemService>>,
     Path(id): Path<i64>,
-    Json(request): Json<ItemRequest>,
+    request: Result<Json<ItemRequest>, JsonRejection>,
 ) -> Result<Json<ItemResponse>, ItemError> {
+    let Json(request) = request.map_err(rejection_to_error)?;
     validate(&request)?;
     let domain = to_item(request);
     service

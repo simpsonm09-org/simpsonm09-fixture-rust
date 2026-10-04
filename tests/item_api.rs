@@ -198,16 +198,51 @@ async fn returns_a_404_for_an_unknown_id_on_delete() {
 }
 
 #[tokio::test]
-async fn rejects_a_blank_name_with_400() {
+async fn rejects_a_blank_name_with_a_400_problem_detail() {
     let app = empty_app();
+    let response = send(&app, post("/items", &json!({"name": "   "}))).await;
+    assert_eq!(response.status, StatusCode::BAD_REQUEST);
+    assert!(response.content_type.contains("application/problem+json"));
+    assert_eq!(
+        response.json(),
+        json!({
+            "type": "about:blank",
+            "title": "Validation failed",
+            "status": 400,
+            "detail": "name must not be blank"
+        })
+    );
     assert_eq!(
         send(&app, post("/items", &json!({"name": ""}))).await.status,
         StatusCode::BAD_REQUEST
     );
-    assert_eq!(
-        send(&app, post("/items", &json!({"name": "   "}))).await.status,
-        StatusCode::BAD_REQUEST
+}
+
+#[tokio::test]
+async fn rejects_a_missing_name_field_with_400() {
+    let app = empty_app();
+    let response = send(&app, post("/items", &json!({}))).await;
+    assert_eq!(response.status, StatusCode::BAD_REQUEST);
+    assert!(response.content_type.contains("application/problem+json"));
+    let body = response.json();
+    assert_eq!(body["type"], "about:blank");
+    assert_eq!(body["title"], "Validation failed");
+    assert_eq!(body["status"], 400);
+    assert!(
+        body["detail"].as_str().unwrap().contains("name"),
+        "the detail should name the missing field: {}",
+        body["detail"]
     );
+}
+
+#[tokio::test]
+async fn rejects_a_wrong_typed_field_with_400() {
+    let app = empty_app();
+    let response = send(&app, post("/items", &json!({"name": 123}))).await;
+    assert_eq!(response.status, StatusCode::BAD_REQUEST);
+    assert!(response.content_type.contains("application/problem+json"));
+    assert_eq!(response.json()["title"], "Validation failed");
+    assert_eq!(response.json()["status"], 400);
 }
 
 #[tokio::test]
@@ -239,6 +274,8 @@ async fn rejects_a_malformed_json_body_with_400() {
         .unwrap();
     let response = send(&app, request).await;
     assert_eq!(response.status, StatusCode::BAD_REQUEST);
+    assert!(response.content_type.contains("application/problem+json"));
+    assert_eq!(response.json()["title"], "Validation failed");
 }
 
 #[tokio::test]
