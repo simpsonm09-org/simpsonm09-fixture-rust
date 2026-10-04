@@ -34,8 +34,14 @@ fn description_is_a_nullable_string_not_an_object() {
             || kind
                 .as_array()
                 .is_some_and(|types| types.iter().any(|value| value == "null"));
-        assert!(allows_string, "{schema}.description must be a string, got {kind}");
-        assert!(allows_null, "{schema}.description must be nullable, got {kind}");
+        assert!(
+            allows_string,
+            "{schema}.description must be a string, got {kind}"
+        );
+        assert!(
+            allows_null,
+            "{schema}.description must be nullable, got {kind}"
+        );
         assert_ne!(kind, "object", "{schema}.description must not be an object");
     }
 }

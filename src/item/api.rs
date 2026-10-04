@@ -106,7 +106,9 @@ impl IntoResponse for ItemError {
                 "Item not found",
                 format!("Item {id} was not found"),
             ),
-            ItemError::Validation(message) => (StatusCode::BAD_REQUEST, "Validation failed", message),
+            ItemError::Validation(message) => {
+                (StatusCode::BAD_REQUEST, "Validation failed", message)
+            }
         };
         let body = ProblemDetail {
             r#type: "about:blank".to_string(),

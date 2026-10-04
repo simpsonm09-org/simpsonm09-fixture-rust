@@ -22,7 +22,9 @@ fn empty_app() -> Router {
 
 /// A router over the three dev seeds.
 fn seeded_app() -> Router {
-    build_router(Arc::new(ItemService::new(Arc::new(InMemoryItemStore::new()))))
+    build_router(Arc::new(ItemService::new(Arc::new(
+        InMemoryItemStore::new(),
+    ))))
 }
 
 struct TestResponse {
@@ -107,7 +109,10 @@ async fn drives_the_full_create_read_update_delete_lifecycle() {
 
     let created = send(
         &app,
-        post("/items", &json!({"name": "Widget", "description": "A small widget"})),
+        post(
+            "/items",
+            &json!({"name": "Widget", "description": "A small widget"}),
+        ),
     )
     .await;
     assert_eq!(created.status, StatusCode::CREATED);
@@ -122,15 +127,24 @@ async fn drives_the_full_create_read_update_delete_lifecycle() {
 
     let one = send(&app, get(&format!("/items/{id}"))).await;
     assert_eq!(one.status, StatusCode::OK);
-    assert_eq!(one.json(), json!({"id": id, "name": "Widget", "description": "A small widget"}));
+    assert_eq!(
+        one.json(),
+        json!({"id": id, "name": "Widget", "description": "A small widget"})
+    );
 
     let updated = send(
         &app,
-        put(&format!("/items/{id}"), &json!({"name": "Renamed", "description": "Still here"})),
+        put(
+            &format!("/items/{id}"),
+            &json!({"name": "Renamed", "description": "Still here"}),
+        ),
     )
     .await;
     assert_eq!(updated.status, StatusCode::OK);
-    assert_eq!(updated.json(), json!({"id": id, "name": "Renamed", "description": "Still here"}));
+    assert_eq!(
+        updated.json(),
+        json!({"id": id, "name": "Renamed", "description": "Still here"})
+    );
 
     let deleted = send(&app, delete(&format!("/items/{id}"))).await;
     assert_eq!(deleted.status, StatusCode::NO_CONTENT);
@@ -213,7 +227,9 @@ async fn rejects_a_blank_name_with_a_400_problem_detail() {
         })
     );
     assert_eq!(
-        send(&app, post("/items", &json!({"name": ""}))).await.status,
+        send(&app, post("/items", &json!({"name": ""})))
+            .await
+            .status,
         StatusCode::BAD_REQUEST
     );
 }
@@ -257,7 +273,10 @@ async fn rejects_an_over_length_description_with_400() {
     let app = empty_app();
     let response = send(
         &app,
-        post("/items", &json!({"name": "Ok", "description": "a".repeat(2001)})),
+        post(
+            "/items",
+            &json!({"name": "Ok", "description": "a".repeat(2001)}),
+        ),
     )
     .await;
     assert_eq!(response.status, StatusCode::BAD_REQUEST);
