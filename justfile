@@ -23,6 +23,11 @@ lint:
 lint-fix:
     mise exec -- flint run --fix
 
+# Run the repo-owned complexity gate. Flint does not activate cargo-clippy, so
+# the shared lint job calls this recipe after flint.
+complexity:
+    mise exec -- cargo clippy --all-targets --all-features -- -D warnings
+
 # Run the AI-slop gate.
 aislop:
     npx --yes aislop@0.16.1 ci
