@@ -33,7 +33,7 @@ test:
 
 # Run the tests and write an lcov report to coverage/lcov.info.
 coverage:
-    mise exec -- cargo llvm-cov --lcov --output-path coverage/lcov.info
+    mise exec -- node scripts/coverage.mjs
 
 # Regenerate docs/openapi.json from the handlers and the DTOs.
 spec:
