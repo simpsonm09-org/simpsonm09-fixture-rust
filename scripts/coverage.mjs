@@ -11,6 +11,7 @@ mkdirSync('coverage', { recursive: true });
 // the repository pins a stable toolchain, so allow that one unstable flag for
 // this run only. The lcov then carries BRDA records.
 const result = spawnSync('cargo', ['llvm-cov', '--branch', '--lcov', '--output-path', 'coverage/lcov.info'], {
+  windowsHide: true,
   stdio: 'inherit',
   env: { ...process.env, RUSTC_BOOTSTRAP: '1' },
 });
