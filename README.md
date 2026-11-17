@@ -2,7 +2,10 @@
 
 A Rust + axum item CRUD service. It is the Rust fixture for the simpsonm09 fleet standard.
 
-The original lives in `simpsonm09-org/simpsonm09-fixture-rust`; work happens on the personal fork. See [`repo-standard`](https://github.com/simpsonm09-org/simpsonm09-repo-standard).
+This repository lives in `simpsonm09-projects/simpsonm09-fixture-rust`. Work happens on a branch
+with a pull request into `main`.
+See [`repo-standard`](https://github.com/simpsonm09-projects/simpsonm09-repo-standard)
+for the branch model and the protection rules.
 
 ## What it does
 
