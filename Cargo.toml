@@ -1,19 +1,19 @@
 [package]
-name = "simpsonm09-fixture-rust"
+name = "fixture-rust"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.99"
 description = "Rust + axum item CRUD service for the simpsonm09 fleet standard"
 license = "MIT"
 publish = false
-default-run = "simpsonm09-fixture-rust"
+default-run = "fixture-rust"
 
 [lib]
-name = "simpsonm09_fixture_rust"
+name = "fixture_rust"
 path = "src/lib.rs"
 
 [[bin]]
-name = "simpsonm09-fixture-rust"
+name = "fixture-rust"
 path = "src/main.rs"
 
 [[bin]]

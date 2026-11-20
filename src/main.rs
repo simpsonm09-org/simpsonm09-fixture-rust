@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use simpsonm09_fixture_rust::app::build_router;
-use simpsonm09_fixture_rust::item::service::ItemService;
-use simpsonm09_fixture_rust::item::store::InMemoryItemStore;
+use fixture_rust::app::build_router;
+use fixture_rust::item::service::ItemService;
+use fixture_rust::item::store::InMemoryItemStore;
 
 #[tokio::main]
 async fn main() {

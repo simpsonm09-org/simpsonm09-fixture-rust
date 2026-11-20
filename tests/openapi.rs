@@ -2,7 +2,7 @@
 //! two contract details the OpenAPI shape must hold.
 
 use serde_json::Value;
-use simpsonm09_fixture_rust::openapi;
+use fixture_rust::openapi;
 
 /// The document exactly as `just spec` writes it.
 fn generated() -> String {

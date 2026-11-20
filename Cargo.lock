@@ -368,7 +368,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "simpsonm09-fixture-rust"
+name = "fixture-rust"
 version = "0.1.0"
 dependencies = [
  "axum",

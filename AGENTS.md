@@ -1,4 +1,4 @@
-# simpsonm09-fixture-rust working agreements
+# fixture-rust working agreements
 
 A layered Rust + axum item CRUD service. It is the Rust fixture for the fleet standard.
 
