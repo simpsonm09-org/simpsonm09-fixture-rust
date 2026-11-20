@@ -1,6 +1,6 @@
 # Documentation
 
-Index for the `simpsonm09-fixture-rust` service, a layered Rust + axum item CRUD API.
+Index for the `fixture-rust` service, a layered Rust + axum item CRUD API.
 
 ## Guides
 
